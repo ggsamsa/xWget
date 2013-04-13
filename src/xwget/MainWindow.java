@@ -414,7 +414,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        jTextField1.setText("http://www.ipb.pt");
+        jTextField1.setText("http://www.isep.pt");
         jTextField2.setText("C:\\Users\\erase\\Documents");
         
     }//GEN-LAST:event_jButton6ActionPerformed
