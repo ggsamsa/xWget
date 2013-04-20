@@ -5,11 +5,9 @@
 package xwget;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.text.DefaultCaret;
 
 /**
  *
@@ -26,6 +24,8 @@ public class MainWindow extends javax.swing.JFrame {
         //Default settings:
         //jSpinner1.setValue(2);
         jRadioButton2.setSelected(true);
+        DefaultCaret caret = (DefaultCaret)jTextArea1.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
     /**
@@ -66,7 +66,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         urlsLeftTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        urlsProcessedTextField = new javax.swing.JTextField();
         jButton6 = new javax.swing.JButton();
 
         jScrollPane1.setViewportView(jTextPane1);
@@ -276,7 +276,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel5.setText("URLs processed:");
 
-        jTextField4.setText("jTextField4");
+        urlsProcessedTextField.setText("jTextField4");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -293,7 +293,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(urlsProcessedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -306,7 +306,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(urlsProcessedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(30, Short.MAX_VALUE))
         );
 
@@ -385,7 +385,7 @@ public class MainWindow extends javax.swing.JFrame {
         if(project.validateMainUrl()){
             jTextArea1.append(" OK\n");
         } else {
-            errorFlag = true;
+            //errorFlag = true;
             jTextArea1.append(" ERROR\n");
         }
 
@@ -400,7 +400,7 @@ public class MainWindow extends javax.swing.JFrame {
             return;
         }
 
-        Runnable task = new MyRunnable(project, jTextArea1, urlsLeftTextField);
+        Runnable task = new MyRunnable(project, jTextArea1, urlsLeftTextField, urlsProcessedTextField);
         Thread worker = new Thread(task);
         
         worker.start();
@@ -414,8 +414,8 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-        jTextField1.setText("http://www.isep.pt");
-        jTextField2.setText("C:\\Users\\erase\\Documents");
+        jTextField1.setText("http://wakinglifemovie.net");
+        jTextField2.setText("D:\\zzzzteste");
         
     }//GEN-LAST:event_jButton6ActionPerformed
 
@@ -480,11 +480,11 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JTextField urlsLeftTextField;
+    private javax.swing.JTextField urlsProcessedTextField;
     // End of variables declaration//GEN-END:variables
 }
 

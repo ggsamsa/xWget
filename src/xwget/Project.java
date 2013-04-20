@@ -21,7 +21,7 @@ public class Project {
         
         int size = cl.getSize(mainUrl);
         
-        if(size > 40){
+        if(size >= 0){
             return true;
         } else {
             return false;
