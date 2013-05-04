@@ -5,6 +5,8 @@
 package xwget;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.text.DefaultCaret;
@@ -354,10 +356,16 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
+        
         boolean errorFlag = false;
         urlsLeftTextField.setText("1");
         
         project = new Project();
+        
+        if(!jTextField1.getText().toString().endsWith("/"))
+        {
+            jTextField1.setText(jTextField1.getText().toString() + "/");
+        }
         
         project.mainUrl = jTextField1.getText().toString();
         project.savePath = jTextField2.getText().toString();
@@ -400,10 +408,15 @@ public class MainWindow extends javax.swing.JFrame {
             return;
         }
 
-        Runnable task = new MyRunnable(project, jTextArea1, urlsLeftTextField, urlsProcessedTextField);
-        Thread worker = new Thread(task);
+        List<Thread> threads = new ArrayList<Thread>();
+        for (int i = 0; i < 5; i++) {
         
-        worker.start();
+            Runnable task = new MyRunnable(project, jTextArea1, urlsLeftTextField, urlsProcessedTextField);
+            Thread worker = new Thread(task);
+            worker.setName(String.valueOf(i));
+            worker.start();
+            threads.add(worker);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
     
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed

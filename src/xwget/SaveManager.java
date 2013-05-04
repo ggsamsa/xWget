@@ -45,18 +45,30 @@ public class SaveManager {
         File f = new File(pathFile);
         f.createNewFile();
         try{
-        FileWriter fstream = new FileWriter(pathFile);
-        BufferedWriter out = new BufferedWriter(fstream);
-        out.write(page);
-        out.close();
+            FileWriter fstream = new FileWriter(pathFile);
+            BufferedWriter out = new BufferedWriter(fstream);
+            out.write(page);
+            out.close();
         }
         catch (Exception e) {
-            
+            System.out.println("Error saving file: " + pathFile);
         }
     }
     
     public void saveFile(String url) throws MalformedURLException, FileNotFoundException, IOException{
         String path = savePath + "/" + getDirectory(url) + "/" + getFilename(url);
+        System.out.println(path);
+        File d = new File(savePath + "/" + getDirectory(url));
+        d.mkdirs();
+        d.createNewFile();
+        URL website = new URL(url);
+        ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+        FileOutputStream fos = new FileOutputStream(path);
+        fos.getChannel().transferFrom(rbc, 0, 1 << 24);
+    }
+    
+    public void saveIndex(String url) throws MalformedURLException, FileNotFoundException, IOException{
+        String path = savePath + "/" + getDirectory(url) + "/" + "index.html";
         System.out.println(path);
         File d = new File(savePath + "/" + getDirectory(url));
         d.mkdirs();
@@ -76,9 +88,9 @@ public class SaveManager {
     private String getFilename(String url){
         int j = url.lastIndexOf("/");
         String dirty = url.substring(j);
-        return dirty.replaceAll("\\?", "_");
+        String clean;
+        clean = dirty.replaceAll("\\?", "_");
+        clean = clean.replaceAll("\\s", "_");
+        return clean;
     }
-    
-    
-    
 }
