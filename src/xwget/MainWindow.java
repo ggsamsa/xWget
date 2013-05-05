@@ -73,7 +73,6 @@ public class MainWindow extends javax.swing.JFrame {
         urlsLeftTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         urlsProcessedTextField = new javax.swing.JTextField();
-        jButton6 = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
@@ -326,14 +325,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         getContentPane().add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 310, 190, 110));
 
-        jButton6.setText("jButton6");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 0, -1, -1));
-
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Filters"));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "HTML", "PDF", "Images" }));
@@ -462,7 +453,7 @@ public class MainWindow extends javax.swing.JFrame {
                 Thread worker = new Thread(task);
                 worker.setName(String.valueOf(i));
                 worker.start();
-                worker.sleep(2000);
+                Thread.sleep(2000);
                 threads.add(worker);
             } catch (InterruptedException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
@@ -475,13 +466,6 @@ public class MainWindow extends javax.swing.JFrame {
             sysInfo.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             sysInfo.setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-        jTextField1.setText("http://wakinglifemovie.net");
-        jTextField2.setText("D:\\zzzzteste");
-        
-    }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         for (Thread thread : threads) {
@@ -545,7 +529,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
