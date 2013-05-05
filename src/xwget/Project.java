@@ -17,8 +17,10 @@ import java.util.Queue;
 public class Project {
     String mainUrl;
     String savePath;
+    String filetype;
     int depth;
     int threadNumber;
+    
     Queue<String> queue = new LinkedList<>();
     List<String> visited = new ArrayList<>();
     

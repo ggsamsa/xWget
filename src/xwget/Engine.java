@@ -24,14 +24,16 @@ public class Engine {
     JTextField urlsLeft;
     JTextField urlsProcessed;
     String mainHost;
+    Boolean pleaseWait = false;
+    int depth;
     
-    
-    Engine(Project projecto, JTextArea log, JTextField urlsLeft, JTextField urlsProcessed) throws IOException{
+    Engine(Project projecto, int depth, JTextArea log, JTextField urlsLeft, JTextField urlsProcessed) throws IOException{
         this.project = projecto;
         this.log = log;
         this.urlsLeft = urlsLeft;
         this.urlsProcessed = urlsProcessed;
         this.mainHost = project.getHost();
+        this.depth = depth;
         
         log.append("Engine created\n");
         
@@ -44,6 +46,7 @@ public class Engine {
     }
     
     private void run() throws IOException, Exception{
+        
         System.setProperty ("jsse.enableSNIExtension", "false");
         Utils u = new Utils();
         MyWebClient cl = new MyWebClient();
@@ -51,11 +54,9 @@ public class Engine {
         System.out.println(project.getHost());
         SaveManager sm = new SaveManager(mainHost, project.savePath);
         sm.saveIndex(url);
-        int tmp = Integer.parseInt(urlsLeft.getText());
         while (true) {
             url = project.queue.poll().toString();
-            tmp -= 1;
-            urlsLeft.setText(String.valueOf(tmp));
+            urlsLeft.setText(String.valueOf(project.queue.size()));
             if(url == null){
                 log.append("\nQueue empty\n");
                 break;
@@ -73,29 +74,57 @@ public class Engine {
             }
             
             if (project.visited.contains(url)) {
-                log.append (" rejected\n");
+                log.append (" rejected [already processed]\n");
                 continue;
             }
+            String cType = cl.getType(url);
             
             log.append(" approved\n");
             
             project.visited.add(url);
             
-            switch(cl.getType(url)){
+            switch(cType){
                 case "text/html":
-                    List<String> links = Utils.extractLinks(url);
-                    for (String link : links){
-                        if(!project.visited.contains(link)){
-                            project.queue.add(link);
-                            tmp += 1;
+                    if( (depth == -2) || (depth >= 0)  ){
+                        List<String> links = Utils.extractLinks(url);
+                        for (String link : links) {
+                            if (!project.visited.contains(link)) {
+                                project.queue.add(link);
+                            }
+                        }
+                        if (!(depth == -2)){
+                            depth -= 1;
                         }
                     }
 
                     urlsProcessed.setText(String.valueOf(project.visited.size()));
-                    sm.saveHtml(url);
+                    if(project.filetype.equals("All") || project.filetype.equals("HTML")){
+                        sm.saveHtml(url);
+                    }
                     break;
                 default:
-                    sm.saveFile(url);
+                    urlsProcessed.setText(String.valueOf(project.visited.size()));
+                    switch (project.filetype) {
+                        case "PDF":
+                            if ("application/pdf".equals(cType)) {
+                                sm.saveFile(url);
+                            }
+                            else{
+                                log.append(" rejected [not PDF]\n");
+                            }
+                            break;
+                        case "Images":
+                            if (cType.startsWith("image")) {
+                                sm.saveFile(url);
+                            }
+                            else{
+                                log.append(" rejected [not an image]\n");
+                            }
+                            break;
+                        case "All":
+                            sm.saveFile(url);
+                            break;
+                    }
                     break;
             }
         }

@@ -7,6 +7,8 @@ package xwget;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.text.DefaultCaret;
@@ -17,6 +19,8 @@ import javax.swing.text.DefaultCaret;
  */
 public class MainWindow extends javax.swing.JFrame {
     Project project;
+    List<Thread> threads;
+    int depth;
     /**
      * Creates new form MainWindow
      */
@@ -70,6 +74,9 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         urlsProcessedTextField = new javax.swing.JTextField();
         jButton6 = new javax.swing.JButton();
+        jPanel7 = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
 
         jScrollPane1.setViewportView(jTextPane1);
 
@@ -93,6 +100,11 @@ public class MainWindow extends javax.swing.JFrame {
         jButton2.setFocusable(false);
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jToolBar1.add(jButton2);
 
         jButton3.setText("Stop");
@@ -230,10 +242,10 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, 150, -1));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, 150, 110));
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("log"));
 
@@ -249,10 +261,10 @@ public class MainWindow extends javax.swing.JFrame {
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(369, 41, 700, 380));
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 40, 700, 520));
 
         jToolBar2.setRollover(true);
 
@@ -322,6 +334,40 @@ public class MainWindow extends javax.swing.JFrame {
         });
         getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 0, -1, -1));
 
+        jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Filters"));
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All", "HTML", "PDF", "Images" }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Filetype:");
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(229, Short.MAX_VALUE))
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(36, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, 350, 110));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -356,7 +402,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        
+        depth = 0;
         boolean errorFlag = false;
         urlsLeftTextField.setText("1");
         
@@ -369,24 +415,25 @@ public class MainWindow extends javax.swing.JFrame {
         
         project.mainUrl = jTextField1.getText().toString();
         project.savePath = jTextField2.getText().toString();
+        project.filetype = jComboBox1.getSelectedItem().toString();
         
         if(jRadioButton1.isSelected()){
-            project.depth = -1;
+            depth = -2;
         }
         
         if(jRadioButton2.isSelected()){
-            project.depth = (int)jSpinner1.getValue();
+            depth = (int)jSpinner1.getValue();
         }
         
         if(jRadioButton3.isSelected()){
-            project.depth = 0;
+            depth = 0;
         }
         
         project.threadNumber = jSlider1.getValue();
         
         jTextArea1.append("Project '" + project.mainUrl + "' is now starting\n");
         jTextArea1.append("It will be saved to " + project.savePath +"\n");
-        jTextArea1.append("The depth level chosen was: " + Integer.toString(project.depth) + "\n");
+        jTextArea1.append("The depth level chosen was: " + Integer.toString(depth) + "\n");
         jTextArea1.append(project.threadNumber + " threads will be used\n");
         
         jTextArea1.append("Validating starting URL... ");
@@ -408,14 +455,18 @@ public class MainWindow extends javax.swing.JFrame {
             return;
         }
 
-        List<Thread> threads = new ArrayList<Thread>();
+        threads = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-        
-            Runnable task = new MyRunnable(project, jTextArea1, urlsLeftTextField, urlsProcessedTextField);
-            Thread worker = new Thread(task);
-            worker.setName(String.valueOf(i));
-            worker.start();
-            threads.add(worker);
+            try {
+                Runnable task = new MyRunnable(project, depth, jTextArea1, urlsLeftTextField, urlsProcessedTextField);
+                Thread worker = new Thread(task);
+                worker.setName(String.valueOf(i));
+                worker.start();
+                worker.sleep(2000);
+                threads.add(worker);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
     
@@ -431,6 +482,27 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField2.setText("D:\\zzzzteste");
         
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        for (Thread thread : threads) {
+                if (thread.isAlive()) {
+                    synchronized(thread){
+                        while(true)
+                        {
+                            try {
+                                thread.wait();
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                }
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -474,7 +546,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -483,6 +557,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
